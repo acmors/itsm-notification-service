@@ -26,8 +26,7 @@ public class EmailLog {
     public EmailLog() {
     }
 
-    public EmailLog(Long id, String toEmail, String subject, String body, EmailType type, EmailStatus status, String errorMessage, LocalDateTime sendAt) {
-        this.id = id;
+    public EmailLog(String toEmail, String subject, String body, EmailType type, EmailStatus status, String errorMessage, LocalDateTime sendAt) {
         this.toEmail = toEmail;
         this.subject = subject;
         this.body = body;
