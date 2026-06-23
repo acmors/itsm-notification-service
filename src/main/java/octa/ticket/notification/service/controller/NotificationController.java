@@ -1,6 +1,7 @@
 package octa.ticket.notification.service.controller;
 
 import octa.ticket.notification.service.dto.TicketCreatedRequest;
+import octa.ticket.notification.service.dto.TicketUpdatedRequest;
 import octa.ticket.notification.service.service.NotificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,12 @@ public class NotificationController {
     @PostMapping("/ticket-created")
     public ResponseEntity<Void> notifyTicketCreated(@RequestBody TicketCreatedRequest request) {
         notificationService.notifyCreatedTicket(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/ticket-updated")
+    public ResponseEntity<Void> notifyUpdatedTicket(@RequestBody TicketUpdatedRequest request){
+        notificationService.notifyUpdatedTicket(request);
         return ResponseEntity.ok().build();
     }
 }
