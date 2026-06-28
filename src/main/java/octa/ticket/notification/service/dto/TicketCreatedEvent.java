@@ -1,15 +1,17 @@
 package octa.ticket.notification.service.dto;
 
-public class TicketCreatedRequest {
+import java.util.List;
+
+public class TicketCreatedEvent {
     private String userEmail;
-    private String analystEmail;
+    private List<String> analystEmail;
     private Integer ticketNumber;
     private String ticketTitle;
 
-    public TicketCreatedRequest() {
+    public TicketCreatedEvent() {
     }
 
-    public TicketCreatedRequest(String userEmail, String analystEmail, Integer ticketNumber, String ticketTitle) {
+    public TicketCreatedEvent(String userEmail, List<String> analystEmail, Integer ticketNumber, String ticketTitle) {
         this.userEmail = userEmail;
         this.analystEmail = analystEmail;
         this.ticketNumber = ticketNumber;
@@ -24,11 +26,11 @@ public class TicketCreatedRequest {
         this.userEmail = userEmail;
     }
 
-    public String getAnalystEmail() {
+    public List<String> getAnalystEmail() {
         return analystEmail;
     }
 
-    public void setAnalystEmail(String analystEmail) {
+    public void setAnalystEmail(List<String> analystEmail) {
         this.analystEmail = analystEmail;
     }
 

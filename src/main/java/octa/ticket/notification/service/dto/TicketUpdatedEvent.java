@@ -1,16 +1,16 @@
 package octa.ticket.notification.service.dto;
 
-public class TicketUpdatedRequest {
+public class TicketUpdatedEvent {
     private String userEmail;
     private String ticketTitle;
     private int ticketNumber;
     private String oldStatus;
     private String newStatus;
 
-    public TicketUpdatedRequest() {
+    public TicketUpdatedEvent() {
     }
 
-    public TicketUpdatedRequest(String userEmail, String ticketTitle, int ticketNumber, String oldStatus, String newStatus) {
+    public TicketUpdatedEvent(String userEmail, String ticketTitle, int ticketNumber, String oldStatus, String newStatus) {
         this.userEmail = userEmail;
         this.ticketTitle = ticketTitle;
         this.ticketNumber = ticketNumber;
