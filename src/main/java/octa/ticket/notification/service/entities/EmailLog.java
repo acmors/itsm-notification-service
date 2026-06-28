@@ -101,7 +101,7 @@ public class EmailLog {
     }
 
     public enum EmailType{
-        VERIFICATION_CODE,
+        USER_CREATED,
         PASSWORD_RECOVERY,
         TICKET_CREATED,
         TICKET_UPDATED

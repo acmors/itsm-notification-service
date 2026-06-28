@@ -2,6 +2,7 @@ package octa.ticket.notification.service.service;
 
 import octa.ticket.notification.service.dto.TicketCreatedEvent;
 import octa.ticket.notification.service.dto.TicketUpdatedEvent;
+import octa.ticket.notification.service.dto.UserCreatedEvent;
 import octa.ticket.notification.service.entities.EmailLog;
 import octa.ticket.notification.service.exception.EmailSendException;
 import octa.ticket.notification.service.repository.EmailLogRepository;
@@ -62,6 +63,33 @@ public class NotificationService {
         }
     }
 
+    public void notifyUserCreated(UserCreatedEvent event){
+        String subject = "Confirme sua conta";
+
+        String body =
+                """
+                Olá %s,
+    
+                Bem-vindo ao Octa Ticket!
+    
+                Seu código de confirmação é:
+    
+                %s
+    
+                Este código expira em 10 minutos.
+    
+                """.formatted(
+                        event.getName(),
+                        event.getVerificationCode()
+                );
+
+        sendEmail(
+                event.getEmail(),
+                subject,
+                body,
+                EmailLog.EmailType.USER_CREATED
+        );
+    }
 
     private void sendEmail(String to, String subject, String body, EmailLog.EmailType emailType){
         try{
