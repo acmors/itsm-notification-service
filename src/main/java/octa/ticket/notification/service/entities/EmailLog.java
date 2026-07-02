@@ -13,6 +13,9 @@ public class EmailLog {
     private Long id;
     private String toEmail;
     private String subject;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String body;
 
     @Enumerated(EnumType.STRING)

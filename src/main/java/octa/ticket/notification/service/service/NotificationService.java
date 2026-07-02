@@ -1,5 +1,6 @@
 package octa.ticket.notification.service.service;
 
+import jakarta.mail.MessagingException;
 import octa.ticket.notification.service.dto.TicketCreatedEvent;
 import octa.ticket.notification.service.dto.TicketUpdatedEvent;
 import octa.ticket.notification.service.dto.UserCreatedEvent;
@@ -9,6 +10,7 @@ import octa.ticket.notification.service.repository.EmailLogRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 public class NotificationService {
@@ -21,24 +23,42 @@ public class NotificationService {
     }
 
 
-    public void notifyCreatedTicket(TicketCreatedEvent request){
-        String subject = "Chamado *#" + request.getTicketNumber() + "* criado.";
-        String body = "Seu chamado *" + request.getTicketTitle() + "* foi criado com sucesso!\nIremos te notificar sobre cada ação realizada em seu chamado.";
-        String analystBody = "Novo chamado '#" + request.getTicketNumber() + "' - " + request.getTicketTitle() + ", foi criado e aguarda atendimento.";
-
-        sendEmail(request.getUserEmail(), subject, body, EmailLog.EmailType.TICKET_CREATED);
+    public void notifyCreatedTicket(TicketCreatedEvent request) throws MessagingException {
+        emailService.sendHtml(
+                request.getUserEmail(),
+                "Chamado criado com sucesso!",
+                "ticket-created.html",
+                Map.of(
+                        "ticketTitle", request.getTicketTitle(),
+                        "ticketNumber", request.getTicketNumber()
+                        ));
 
         for(String analystEmail : request.getAnalystEmail()){
-            sendEmail(analystEmail, subject, analystBody, EmailLog.EmailType.TICKET_CREATED);
+            emailService.sendHtml(
+                    analystEmail,
+                    "Novo ticket criado no sistema.",
+                    "ticket-created-analyst.html",
+                    Map.of(
+                            "ticketTitle", request.getTicketTitle(),
+                            "ticketNumber", request.getTicketNumber()
+                    ));
         }
     }
 
     public void notifyUpdatedTicket(TicketUpdatedEvent request){
-        String subject = "Chamado *#" + request.getTicketNumber() + "* foi atualizado.";
+        String subject = "Chamado #" + request.getTicketNumber() + " foi atualizado!";
         String body = "Seu chamado *" + request.getTicketTitle() + ", mudou de " + request.getOldStatus() + " para " + request.getNewStatus() + ".";
 
         try{
-            emailService.send(request.getUserEmail(), subject, body);
+            emailService.sendHtml(
+                    request.getUserEmail(),
+                    subject,
+                    "ticket-updated.html",
+                    Map.of(
+                            "ticketTitle", request.getTicketTitle(),
+                            "oldStatus", request.getOldStatus(),
+                            "newStatus", request.getNewStatus()
+                    ));
 
             EmailLog emailLog = new EmailLog(
                     request.getUserEmail(),
@@ -63,34 +83,19 @@ public class NotificationService {
         }
     }
 
-    public void notifyUserCreated(UserCreatedEvent event){
+    public void notifyUserCreated(UserCreatedEvent event) throws MessagingException {
         String subject = "Confirme sua conta";
 
-        String body =
-                """
-                Olá %s,
-    
-                Bem-vindo ao Octa Ticket!
-    
-                Seu código de confirmação é:
-    
-                %s
-    
-                Este código expira em 10 minutos.
-    
-                """.formatted(
-                        event.getName(),
-                        event.getVerificationCode()
-                );
-
-        sendEmail(
+        emailService.sendHtml(
                 event.getEmail(),
                 subject,
-                body,
-                EmailLog.EmailType.USER_CREATED
+                "user-created.html",
+                Map.of(
+                        "name", event.getName(),
+                        "code", event.getVerificationCode()
+                )
         );
     }
-
     private void sendEmail(String to, String subject, String body, EmailLog.EmailType emailType){
         try{
             emailService.send(to, subject, body);
@@ -100,4 +105,6 @@ public class NotificationService {
             throw new EmailSendException("Ocorreu um erro ao encaminhar o email");
         }
     }
+
+
 }
